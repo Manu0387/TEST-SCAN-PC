@@ -22,7 +22,7 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      # ✅ Télécharger et configurer Gradle 8.7 manuellement
+      # ✅ Installer Gradle 8.7 et ajouter au PATH
       - name: Install Gradle 8.7
         run: |
           wget https://services.gradle.org/distributions/gradle-8.7-bin.zip
@@ -30,13 +30,12 @@ jobs:
           echo "$HOME/gradle-8.7/bin" >> $GITHUB_PATH
           gradle -v
 
-      # 🏗 Construire l'APK Debug en utilisant le Gradle qu'on vient d'installer
+      # 🏗 Construire l'APK avec Gradle 8.7 (on vérifie la version juste avant)
       - name: Build Debug APK
         run: |
           gradle --version
           gradle assembleDebug
 
-      # 📦 Uploader l'APK généré
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
