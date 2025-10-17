@@ -1,0 +1,40 @@
+name: Android CI - Build APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      # ✅ Installer Gradle directement (pas besoin du wrapper)
+      - name: Install Gradle
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gradle
+          gradle -v
+
+      # 🏗 Construire l'APK debug
+      - name: Build Debug APK
+        run: gradle assembleDebug
+
+      # 📦 Sauvegarder l'APK dans les Artifacts
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Scan-elec-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
