@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -21,18 +22,20 @@ jobs:
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
-      # ✅ Installer Gradle directement (pas besoin du wrapper)
-      - name: Install Gradle
+      # ✅ Installer Gradle 8.7 manuellement (apt est trop ancien)
+      - name: Install Gradle 8.7
         run: |
-          sudo apt-get update
-          sudo apt-get install -y gradle
+          wget https://services.gradle.org/distributions/gradle-8.7-bin.zip
+          unzip gradle-8.7-bin.zip -d /usr/local/
+          ln -s /usr/local/gradle-8.7 /usr/local/gradle
+          echo "export PATH=/usr/local/gradle/bin:$PATH" >> $GITHUB_ENV
           gradle -v
 
-      # 🏗 Construire l'APK debug
+      # 🏗 Construire l'APK Debug
       - name: Build Debug APK
         run: gradle assembleDebug
 
-      # 📦 Sauvegarder l'APK dans les Artifacts
+      # 📦 Uploader l'APK généré en artifact téléchargeable
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
